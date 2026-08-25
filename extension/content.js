@@ -11,28 +11,18 @@ setInterval(() => {
   const inputField = document.querySelector('#prompt-textarea');
   if (!inputField) return;
 
-  inputField.addEventListener("keydown", async (event) => {
-    console.log("Lostop: нажата клавиша:", event.key);
-
+  inputField.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
 
-    console.log("Lostop: это Enter, начинаю проверку текста");
     const userText = getInputText(inputField);
-    console.log("Lostop: текст для проверки:", userText);
 
-    const response = await fetch("http://localhost:8000/scan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: userText })
-    });
-
-    const result = await response.json();
-    console.log("Lostop: ответ сервера:", result);
-
-    if (result.is_blocked) {
-      event.preventDefault();
-      event.stopPropagation();
-      alert("Lostop заблокировал отправку: " + result.reason);
-    }
+    chrome.runtime.sendMessage(
+      { type: "SCAN_TEXT", text: userText },
+      (result) => {
+        if (result && result.is_blocked) {
+          alert("Lostop заблокировал отправку: " + result.reason);
+        }
+      }
+    );
   }, true);
 }, 1000);
