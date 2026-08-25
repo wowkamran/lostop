@@ -1,3 +1,5 @@
+console.log("Lostop: скрипт запущен!");
+
 function getInputText(element) {
   if (element.value !== undefined) {
     return element.value;
