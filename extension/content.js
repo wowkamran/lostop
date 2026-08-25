@@ -1,10 +1,17 @@
-setInterval(() => {
-  const textarea = document.querySelector("textarea");
-  if (!textarea) return;
+function getInputText(element) {
+  if (element.value !== undefined) {
+    return element.value;
+  }
+  return element.innerText || element.textContent;
+}
 
-  textarea.addEventListener("keydown", async (event) => {
+setInterval(() => {
+  const inputField = document.querySelector('#prompt-textarea');
+  if (!inputField) return;
+
+  inputField.addEventListener("keydown", async (event) => {
     if (event.key !== "Enter") return;
-    const userText = textarea.value;
+    const userText = getInputText(inputField);
 
     const response = await fetch("http://localhost:8000/scan", {
       method: "POST",
@@ -18,5 +25,5 @@ setInterval(() => {
       event.stopPropagation();
       alert("Lostop заблокировал отправку: " + result.reason);
     }
-  });
+  }, true);
 }, 1000);
