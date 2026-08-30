@@ -13,34 +13,40 @@ setInterval(() => {
   const inputField = document.querySelector('#prompt-textarea');
   if (!inputField) return;
 
-  // Skip if we already attached a listener to this field
-  // (otherwise the interval would keep adding duplicate listeners)
   if (inputField.dataset.lostopHooked) return;
   inputField.dataset.lostopHooked = "true";
 
   inputField.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
 
-    // This is our own re-triggered Enter after the server approved it — let it through
+    console.log("Lostop: Enter detected");
+
     if (bypassNext) {
+      console.log("Lostop: this is our own resend, skipping check");
       bypassNext = false;
       return;
     }
 
-    // Always block first, ask the server second
+    console.log("Lostop: blocking for now, checking with server...");
     event.preventDefault();
-    event.stopImmediatePropagation();
 
     const userText = getInputText(inputField);
+    console.log("Lostop: text to check:", userText);
 
     chrome.runtime.sendMessage(
       { type: "SCAN_TEXT", text: userText },
       (result) => {
+        console.log("Lostop: server responded:", result);
+
+        if (chrome.runtime.lastError) {
+          console.log("Lostop: connection error:", chrome.runtime.lastError.message);
+          return;
+        }
+
         if (result && result.is_blocked) {
           alert("Lostop blocked this: " + result.reason);
-          // Text stays in the field, nothing is sent
         } else {
-          // Safe — resend by simulating Enter again
+          console.log("Lostop: safe, resending...");
           bypassNext = true;
           const resendEvent = new KeyboardEvent('keydown', {
             key: 'Enter',
@@ -49,6 +55,7 @@ setInterval(() => {
             cancelable: true
           });
           inputField.dispatchEvent(resendEvent);
+          console.log("Lostop: resend dispatched");
         }
       }
     );
