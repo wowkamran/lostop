@@ -2,6 +2,10 @@ console.log("Lostop: script started!");
 
 let bypassNext = false;
 
+function getInputField() {
+  return document.querySelector('#prompt-textarea');
+}
+
 function getInputText(element) {
   if (element.value !== undefined) {
     return element.value;
@@ -22,12 +26,10 @@ function checkAndAct(inputField, triggerResend) {
         alert("Lostop: could not verify this message (connection error). Blocked for safety.");
         return;
       }
-
       if (result && result.error) {
         alert("Lostop: could not verify this message (server unreachable). Blocked for safety.");
         return;
       }
-
       if (result && result.is_blocked) {
         alert("Lostop blocked this: " + result.reason);
       } else {
@@ -38,65 +40,53 @@ function checkAndAct(inputField, triggerResend) {
   );
 }
 
-function attachHooks() {
-  const inputField = document.querySelector('#prompt-textarea');
-  if (inputField && !inputField.dataset.lostopHookedKey) {
-    inputField.dataset.lostopHookedKey = "true";
-    console.log("Lostop: hooked input field");
+// Attached at the document level with capture: true, so this runs
+// BEFORE the event ever reaches the input field or ChatGPT's own handlers.
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
 
-    inputField.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter") return;
+  const inputField = getInputField();
+  if (!inputField) return;
+  if (event.target !== inputField && !inputField.contains(event.target)) return;
 
-      if (bypassNext) {
-        bypassNext = false;
-        return;
-      }
-
-      console.log("Lostop: Enter detected, blocking for now");
-      event.preventDefault();
-      event.stopImmediatePropagation();
-
-      checkAndAct(inputField, () => {
-        bypassNext = true;
-        const resendEvent = new KeyboardEvent('keydown', {
-          key: 'Enter', code: 'Enter', bubbles: true, cancelable: true
-        });
-        inputField.dispatchEvent(resendEvent);
-      });
-    }, true);
+  if (bypassNext) {
+    bypassNext = false;
+    return;
   }
 
-  const sendButton = document.querySelector('button[data-testid="send-button"]');
-  if (sendButton && inputField && !sendButton.dataset.lostopHookedClick) {
-    sendButton.dataset.lostopHookedClick = "true";
-    console.log("Lostop: hooked send button");
+  console.log("Lostop: Enter detected (document-level), blocking for now");
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  event.stopPropagation();
 
-    sendButton.addEventListener("click", (event) => {
-      if (bypassNext) {
-        bypassNext = false;
-        return;
-      }
+  checkAndAct(inputField, () => {
+    bypassNext = true;
+    const resendEvent = new KeyboardEvent('keydown', {
+      key: 'Enter', code: 'Enter', bubbles: true, cancelable: true
+    });
+    inputField.dispatchEvent(resendEvent);
+  });
+}, true);
 
-      console.log("Lostop: Send button clicked, blocking for now");
-      event.preventDefault();
-      event.stopImmediatePropagation();
+document.addEventListener("click", (event) => {
+  const sendButton = event.target.closest('button[data-testid="send-button"]');
+  if (!sendButton) return;
 
-      checkAndAct(inputField, () => {
-        bypassNext = true;
-        sendButton.click();
-      });
-    }, true);
+  const inputField = getInputField();
+  if (!inputField) return;
+
+  if (bypassNext) {
+    bypassNext = false;
+    return;
   }
-}
 
-// React immediately to DOM changes instead of waiting up to 1 second
-const observer = new MutationObserver(() => {
-  attachHooks();
-});
-observer.observe(document.body, { childList: true, subtree: true });
+  console.log("Lostop: Send button clicked (document-level), blocking for now");
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  event.stopPropagation();
 
-// Run once immediately on page load
-attachHooks();
-
-// Keep a short interval as a safety net, in case MutationObserver misses something
-setInterval(attachHooks, 300);
+  checkAndAct(inputField, () => {
+    bypassNext = true;
+    sendButton.click();
+  });
+}, true);
