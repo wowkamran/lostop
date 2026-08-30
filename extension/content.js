@@ -47,7 +47,9 @@ document.addEventListener("keydown", (event) => {
 
   const inputField = getInputField();
   if (!inputField) return;
-  if (event.target !== inputField && !inputField.contains(event.target)) return;
+
+  const text = getInputText(inputField);
+  if (!text || text.trim() === "") return;
 
   if (bypassNext) {
     bypassNext = false;
