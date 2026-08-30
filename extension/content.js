@@ -54,6 +54,7 @@ function attachHooks() {
 
       console.log("Lostop: Enter detected, blocking for now");
       event.preventDefault();
+      event.stopImmediatePropagation();
 
       checkAndAct(inputField, () => {
         bypassNext = true;
