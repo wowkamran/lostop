@@ -31,7 +31,7 @@ setInterval(() => {
     event.preventDefault();
 
     const userText = getInputText(inputField);
-    console.log("Lostop: text to check:", userText);
+    consol.log("Lostop: text to check:", userText);
 
     chrome.runtime.sendMessage(
       { type: "SCAN_TEXT", text: userText },
@@ -40,6 +40,18 @@ setInterval(() => {
 
         if (chrome.runtime.lastError) {
           console.log("Lostop: connection error:", chrome.runtime.lastError.message);
+          return;
+        }
+
+        if (result && result.error) {
+          // Server unreachable — fail safe by blocking, not sending
+          alert("Lostop: could not verify this message (server unreachable). Blocked for safety.");
+          return;
+        }
+
+        if (result && result.error) {
+          // Server unreachable — fail safe by blocking, not sending
+          alert("Lostop: could not verify this message (server unreachable). Blocked for safety.");
           return;
         }
 
