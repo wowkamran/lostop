@@ -47,6 +47,21 @@ def save_incident(reason, text):
     conn.close()
 
 
+def is_valid_luhn(number_str):
+    digits = [int(d) for d in re.sub(r"\D", "", number_str)]
+    if len(digits) < 13:
+        return False
+    digits.reverse()
+    total = 0
+    for i, digit in enumerate(digits):
+        if i % 2 == 1:
+            digit *= 2
+            if digit > 9:
+                digit -= 9
+        total += digit
+    return total % 10 == 0
+
+
 init_db()
 
 
@@ -60,8 +75,9 @@ PATTERNS = [
     (r"ghp_[A-Za-z0-9]{36}", "GitHub Personal Access Token detected"),
     (r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", "JWT token detected"),
     (r"-----BEGIN (RSA |EC |)PRIVATE KEY-----", "Private key (PEM) detected"),
-    (r"\b(?:\d[ -]*?){13,16}\b", "Possible card number detected"),
 ]
+
+CARD_CANDIDATE_PATTERN = r"\b(?:\d[ -]?){13,16}\b"
 
 
 @app.post("/scan")
@@ -70,6 +86,12 @@ def scan_text(request: ScanRequest):
 
     for pattern, reason in PATTERNS:
         if re.search(pattern, text):
+            save_incident(reason, text)
+            return {"is_blocked": True, "reason": reason}
+
+    for match in re.finditer(CARD_CANDIDATE_PATTERN, text):
+        if is_valid_luhn(match.group()):
+            reason = "Card number detected (Luhn-validated)"
             save_incident(reason, text)
             return {"is_blocked": True, "reason": reason}
 
