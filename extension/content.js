@@ -38,13 +38,11 @@ function checkAndAct(inputField, triggerResend) {
   );
 }
 
-setInterval(() => {
+function attachHooks() {
   const inputField = document.querySelector('#prompt-textarea');
-  if (!inputField) return;
-
-  // ---- Handle Enter key ----
-  if (!inputField.dataset.lostopHookedKey) {
+  if (inputField && !inputField.dataset.lostopHookedKey) {
     inputField.dataset.lostopHookedKey = "true";
+    console.log("Lostop: hooked input field");
 
     inputField.addEventListener("keydown", (event) => {
       if (event.key !== "Enter") return;
@@ -67,10 +65,10 @@ setInterval(() => {
     }, true);
   }
 
-  // ---- Handle Send button click ----
   const sendButton = document.querySelector('button[data-testid="send-button"]');
-  if (sendButton && !sendButton.dataset.lostopHookedClick) {
+  if (sendButton && inputField && !sendButton.dataset.lostopHookedClick) {
     sendButton.dataset.lostopHookedClick = "true";
+    console.log("Lostop: hooked send button");
 
     sendButton.addEventListener("click", (event) => {
       if (bypassNext) {
@@ -88,4 +86,16 @@ setInterval(() => {
       });
     }, true);
   }
-}, 1000);
+}
+
+// React immediately to DOM changes instead of waiting up to 1 second
+const observer = new MutationObserver(() => {
+  attachHooks();
+});
+observer.observe(document.body, { childList: true, subtree: true });
+
+// Run once immediately on page load
+attachHooks();
+
+// Keep a short interval as a safety net, in case MutationObserver misses something
+setInterval(attachHooks, 300);
