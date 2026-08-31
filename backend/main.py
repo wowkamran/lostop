@@ -70,11 +70,18 @@ class ScanRequest(BaseModel):
 
 
 PATTERNS = [
+    (r"sk-ant-[A-Za-z0-9_-]{20,120}", "Anthropic API key detected"),
     (r"sk-[A-Za-z0-9]{20,48}", "OpenAI API key detected"),
     (r"AKIA[0-9A-Z]{16}", "AWS Access Key detected"),
     (r"ghp_[A-Za-z0-9]{36}", "GitHub Personal Access Token detected"),
     (r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", "JWT token detected"),
     (r"-----BEGIN (RSA |EC |)PRIVATE KEY-----", "Private key (PEM) detected"),
+    (r"postgres(?:ql)?:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (PostgreSQL) detected"),
+    (r"mysql:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (MySQL) detected"),
+    (r"mongodb(?:\+srv)?:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (MongoDB) detected"),
+    (r"sk_live_[A-Za-z0-9]{24,}", "Stripe live secret key detected"),
+    (r"sk_test_[A-Za-z0-9]{24,}", "Stripe test secret key detected"),
+    (r'"type":\s*"service_account"', "GCP Service Account key detected"),
 ]
 
 CARD_CANDIDATE_PATTERN = r"\b(?:\d[ -]?){13,16}\b"
