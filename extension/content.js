@@ -1,6 +1,7 @@
 console.log("Lostop: script started!");
 
 let bypassNext = false;
+let checkInProgress = false;
 
 function getInputField() {
   return document.querySelector('#prompt-textarea');
@@ -16,10 +17,12 @@ function getInputText(element) {
 function checkAndAct(inputField, triggerResend) {
   const userText = getInputText(inputField);
   console.log("Lostop: text to check:", userText);
+  checkInProgress = true;
 
   chrome.runtime.sendMessage(
     { type: "SCAN_TEXT", text: userText },
     (result) => {
+      checkInProgress = false;
       console.log("Lostop: server responded:", result);
 
       if (chrome.runtime.lastError) {
@@ -40,21 +43,29 @@ function checkAndAct(inputField, triggerResend) {
   );
 }
 
-// Attached at the document level with capture: true, so this runs
-// BEFORE the event ever reaches the input field or ChatGPT's own handlers.
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Enter") return;
 
   const inputField = getInputField();
   if (!inputField) return;
 
-  const text = getInputText(inputField);
-  if (!text || text.trim() === "") return;
-
   if (bypassNext) {
     bypassNext = false;
     return;
   }
+
+  // If a check is already in progress (e.g. from the Send button),
+  // block this Enter too — don't let it slip through on an empty field.
+  if (checkInProgress) {
+    console.log("Lostop: Enter blocked, a check is already in progress");
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    return;
+  }
+
+  const text = getInputText(inputField);
+  if (!text || text.trim() === "") return;
 
   console.log("Lostop: Enter detected (document-level), blocking for now");
   event.preventDefault();
