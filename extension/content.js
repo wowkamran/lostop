@@ -1,3 +1,49 @@
+function showLostopToast(reason) {
+  const existing = document.getElementById("lostop-toast");
+  if (existing) existing.remove();
+
+  const toast = document.createElement("div");
+  toast.id = "lostop-toast";
+  toast.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999999;
+      background: #17140F;
+      color: #EDE6D6;
+      border-left: 4px solid #C1272D;
+      border-radius: 8px;
+      padding: 16px 20px;
+      max-width: 340px;
+      font-family: 'Segoe UI', sans-serif;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    " id="lostop-toast-inner">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 18px;">🛑</span>
+        <strong style="font-size: 14px;">Lostop blocked this message</strong>
+      </div>
+      <div style="font-size: 13px; color: rgba(237,230,214,0.7); margin-left: 26px;">
+        ${reason}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    const inner = document.getElementById("lostop-toast-inner");
+    if (inner) inner.style.transform = "translateX(0)";
+  });
+
+  setTimeout(() => {
+    const inner = document.getElementById("lostop-toast-inner");
+    if (inner) inner.style.transform = "translateX(400px)";
+    setTimeout(() => toast.remove(), 300);
+  }, 5000);
+}
+
 console.log("Lostop: script started!");
 
 let bypassNext = false;
@@ -26,15 +72,15 @@ function checkAndAct(inputField, triggerResend) {
       console.log("Lostop: server responded:", result);
 
       if (chrome.runtime.lastError) {
-        alert("Lostop: could not verify this message (connection error). Blocked for safety.");
+        showLostopToast("Could not verify this message (connection error). Blocked for safety.");
         return;
       }
       if (result && result.error) {
-        alert("Lostop: could not verify this message (server unreachable). Blocked for safety.");
+        showLostopToast("Could not verify this message (server unreachable). Blocked for safety.");
         return;
       }
       if (result && result.is_blocked) {
-        alert("Lostop blocked this: " + result.reason);
+        showLostopToast(result.reason);
       } else {
         console.log("Lostop: safe, resending...");
         triggerResend();
@@ -54,8 +100,6 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  // If a check is already in progress (e.g. from the Send button),
-  // block this Enter too — don't let it slip through on an empty field.
   if (checkInProgress) {
     console.log("Lostop: Enter blocked, a check is already in progress");
     event.preventDefault();
