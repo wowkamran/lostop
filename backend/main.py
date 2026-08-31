@@ -74,6 +74,7 @@ PATTERNS = [
     (r"sk-[A-Za-z0-9]{20,48}", "OpenAI API key detected"),
     (r"AKIA[0-9A-Z]{16}", "AWS Access Key detected"),
     (r"ghp_[A-Za-z0-9]{36}", "GitHub Personal Access Token detected"),
+    (r"glpat-[A-Za-z0-9_-]{20}", "GitLab Personal Access Token detected"),
     (r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", "JWT token detected"),
     (r"-----BEGIN (RSA |EC |)PRIVATE KEY-----", "Private key (PEM) detected"),
     (r"postgres(?:ql)?:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (PostgreSQL) detected"),
@@ -82,6 +83,10 @@ PATTERNS = [
     (r"sk_live_[A-Za-z0-9]{24,}", "Stripe live secret key detected"),
     (r"sk_test_[A-Za-z0-9]{24,}", "Stripe test secret key detected"),
     (r'"type":\s*"service_account"', "GCP Service Account key detected"),
+    (r"hooks\.slack\.com\/services\/[A-Za-z0-9/]+", "Slack Incoming Webhook detected"),
+    (r"discord(?:app)?\.com\/api\/webhooks\/[0-9]+\/[A-Za-z0-9_-]+", "Discord Webhook detected"),
+    (r"[MN][A-Za-z0-9_-]{23,25}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,38}", "Discord Bot Token detected"),
+    (r"hf_[A-Za-z0-9]{34,40}", "Hugging Face Access Token detected"),
 ]
 
 CARD_CANDIDATE_PATTERN = r"\b(?:\d[ -]?){13,16}\b"
