@@ -97,15 +97,24 @@ def scan_text(request: ScanRequest):
     text = request.text
 
     for pattern, reason in PATTERNS:
-        if re.search(pattern, text):
+        match = re.search(pattern, text)
+        if match:
             save_incident(reason, text)
-            return {"is_blocked": True, "reason": reason}
+            return {
+                "is_blocked": True,
+                "reason": reason,
+                "matched_text": match.group()
+            }
 
     for match in re.finditer(CARD_CANDIDATE_PATTERN, text):
         if is_valid_luhn(match.group()):
             reason = "Card number detected (Luhn-validated)"
             save_incident(reason, text)
-            return {"is_blocked": True, "reason": reason}
+            return {
+                "is_blocked": True,
+                "reason": reason,
+                "matched_text": match.group()
+            }
 
     return {"is_blocked": False}
 
