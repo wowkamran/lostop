@@ -111,9 +111,22 @@ console.log("Lostop: script started!");
 
 let bypassNext = false;
 let checkInProgress = false;
+let fieldNotFoundWarned = false;
 
+// Multiple fallback selectors — if the site changes its markup,
+// we try several known patterns instead of relying on just one.
 function getInputField() {
-  return document.querySelector('#prompt-textarea');
+  const selectors = [
+    '#prompt-textarea',
+    'div[contenteditable="true"][role="textbox"]',
+    'div[contenteditable="true"][data-id]',
+    'textarea[data-testid]'
+  ];
+  for (const selector of selectors) {
+    const el = document.querySelector(selector);
+    if (el) return el;
+  }
+  return null;
 }
 
 function getInputText(element) {
@@ -155,9 +168,10 @@ function checkAndAct(inputField, triggerResend) {
   );
 }
 
-// Enter key — listens at document level with capture, and blocks
-// unconditionally while a check is in progress (fixes the race
-// condition where the field looked empty right after clicking Send).
+// Enter key — listens at document level with capture, so it runs
+// before ChatGPT's own handler. Blocks unconditionally while a check
+// is already in progress, which fixes the race condition where the
+// field looked empty right after clicking the Send button.
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Enter") return;
 
@@ -217,3 +231,17 @@ document.addEventListener("click", (event) => {
     sendButton.click();
   });
 }, true);
+
+// Warn the user (instead of silently doing nothing) if the input
+// field can't be found at all — e.g. the site changed its markup.
+setInterval(() => {
+  const field = getInputField();
+  if (!field && !fieldNotFoundWarned) {
+    fieldNotFoundWarned = true;
+    console.warn("Lostop: could not find the input field. Protection may not be active on this page.");
+    showLostopToast("Warning: Lostop could not detect the input field on this page. You may not be protected.");
+  }
+  if (field) {
+    fieldNotFoundWarned = false;
+  }
+}, 3000);
