@@ -55,18 +55,23 @@ function findTextRangeAcrossNodes(container, searchText) {
   return range;
 }
 
-function highlightSecretInField(inputField, matchedText) {
+function highlightSecretsInField(inputField, matchedTexts) {
   if (!window.CSS || !CSS.highlights) {
     console.log("Lostop: CSS.highlights API not supported in this browser");
     return;
   }
-  if (!matchedText) return;
+  if (!matchedTexts || matchedTexts.length === 0) return;
 
-  const range = findTextRangeAcrossNodes(inputField, matchedText);
-  if (!range) return;
+  const ranges = [];
+  for (const text of matchedTexts) {
+    const range = findTextRangeAcrossNodes(inputField, text);
+    if (range) ranges.push(range);
+  }
 
-  console.log("Lostop: highlighting matched text in field");
-  const highlight = new Highlight(range);
+  if (ranges.length === 0) return;
+
+  console.log("Lostop: highlighting", ranges.length, "matched secret(s) in field");
+  const highlight = new Highlight(...ranges);
   CSS.highlights.set("lostop-secret", highlight);
 
   const clear = () => {
@@ -81,7 +86,7 @@ function highlightSecretInField(inputField, matchedText) {
 }
 
 // ---- Toast notification ----
-function showLostopToast(reason, matchedText) {
+function showLostopToast(reason, matchedText, totalCount) {
   const existingToast = document.getElementById("lostop-toast");
   if (existingToast) existingToast.remove();
 
@@ -106,7 +111,7 @@ function showLostopToast(reason, matchedText) {
     " id="lostop-toast-inner">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
         <span style="font-size: 18px;">🛑</span>
-        <strong style="font-size: 14px;">Lostop blocked this message</strong>
+        <strong style="font-size: 14px;">Lostop blocked this message${totalCount > 1 ? ` (${totalCount} secrets found)` : ''}</strong>
       </div>
       <div style="font-size: 13px; color: rgba(237,230,214,0.7); margin-left: 26px;">
         ${reason}
@@ -187,13 +192,10 @@ function checkAndAct(inputField, triggerResend) {
         return;
       }
       if (result && result.is_blocked) {
-        showLostopToast(result.reason, result.matched_text);
-        if (result.matched_text) {
-          highlightSecretInField(inputField, result.matched_text);
-        }
-        // Force the editor to resync its internal state with the DOM,
-        // closing the window where ChatGPT's own model still holds
-        // the original text even though the field looks empty.
+        const allFindings = result.all_findings || [{ reason: result.reason, matched_text: result.matched_text }];
+        showLostopToast(result.reason, result.matched_text, allFindings.length);
+        const allMatchedTexts = allFindings.map(f => f.matched_text).filter(Boolean);
+        highlightSecretsInField(inputField, allMatchedTexts);
         inputField.focus();
       } else {
         console.log("Lostop: safe, resending...");
