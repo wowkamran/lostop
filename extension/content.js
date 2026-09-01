@@ -1,3 +1,5 @@
+const LOSTOP_ALERT_DURATION_MS = 5000;
+
 // ---- Highlight styling (injected once) ----
 if (!document.getElementById("lostop-highlight-style")) {
   const style = document.createElement("style");
@@ -80,9 +82,11 @@ function highlightSecretsInField(inputField, matchedTexts) {
   };
   inputField.addEventListener("input", clear);
 
+  // Synced with the toast — highlight disappears at the same moment
   setTimeout(() => {
     CSS.highlights.delete("lostop-secret");
-  }, 8000);
+    inputField.removeEventListener("input", clear);
+  }, LOSTOP_ALERT_DURATION_MS);
 }
 
 // ---- Toast notification ----
@@ -141,7 +145,7 @@ function showLostopToast(reason, matchedText, totalCount) {
     const inner = document.getElementById("lostop-toast-inner");
     if (inner) inner.style.transform = "translateX(400px)";
     setTimeout(() => toast.remove(), 300);
-  }, 5000);
+  }, LOSTOP_ALERT_DURATION_MS);
 }
 
 // ---- Core blocking logic ----
