@@ -95,26 +95,28 @@ CARD_CANDIDATE_PATTERN = r"\b(?:\d[ -]?){13,16}\b"
 @app.post("/scan")
 def scan_text(request: ScanRequest):
     text = request.text
+    findings = []
 
     for pattern, reason in PATTERNS:
-        match = re.search(pattern, text)
-        if match:
-            save_incident(reason, text)
-            return {
-                "is_blocked": True,
-                "reason": reason,
-                "matched_text": match.group()
-            }
+        for match in re.finditer(pattern, text):
+            findings.append({"reason": reason, "matched_text": match.group()})
 
     for match in re.finditer(CARD_CANDIDATE_PATTERN, text):
         if is_valid_luhn(match.group()):
-            reason = "Card number detected (Luhn-validated)"
-            save_incident(reason, text)
-            return {
-                "is_blocked": True,
-                "reason": reason,
+            findings.append({
+                "reason": "Card number detected (Luhn-validated)",
                 "matched_text": match.group()
-            }
+            })
+
+    if findings:
+        for f in findings:
+            save_incident(f["reason"], text)
+        return {
+            "is_blocked": True,
+            "reason": findings[0]["reason"],
+            "matched_text": findings[0]["matched_text"],
+            "all_findings": findings
+        }
 
     return {"is_blocked": False}
 
