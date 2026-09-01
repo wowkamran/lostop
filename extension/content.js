@@ -265,12 +265,19 @@ document.addEventListener("click", (event) => {
   });
 }, true);
 
-// Warn the user if the input field can't be found at all
+// Warn the user if the input field can't be found at all —
+// but only after giving the page a few seconds to finish loading,
+// so we don't flag a normal startup delay as a real problem.
+const pageLoadedAt = Date.now();
+const STARTUP_GRACE_PERIOD_MS = 6000;
+
 setInterval(() => {
   const field = getInputField();
-  if (!field && !fieldNotFoundWarned) {
+  const pastGracePeriod = (Date.now() - pageLoadedAt) > STARTUP_GRACE_PERIOD_MS;
+
+  if (!field && pastGracePeriod && !fieldNotFoundWarned) {
     fieldNotFoundWarned = true;
-    console.warn("Lostop: could not find the input field. Protection may not be active on this page.");
+    console.log("Lostop: could not find the input field. Protection may not be active on this page.");
     showLostopToast("Warning: Lostop could not detect the input field on this page. You may not be protected.");
   }
   if (field) {
