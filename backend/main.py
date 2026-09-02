@@ -130,3 +130,7 @@ def get_incidents():
     ).fetchall()
     conn.close()
     return [dict(row) for row in rows]
+
+if __name__ == "__main__":
+       import uvicorn
+       uvicorn.run(app, host="0.0.0.0", port=8000)
