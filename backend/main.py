@@ -134,4 +134,12 @@ def get_incidents():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import logging
+
+    logging.basicConfig(
+        filename="lostop-server.log",
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s"
+    )
+
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="warning")
