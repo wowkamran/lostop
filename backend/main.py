@@ -1,3 +1,13 @@
+import io
+import sys
+
+# Redirect stdout/stderr when running without a console (PyInstaller --noconsole),
+# since sys.stdout is None in that mode and uvicorn's logger crashes without it.
+if sys.stdout is None:
+    sys.stdout = io.StringIO()
+if sys.stderr is None:
+    sys.stderr = io.StringIO()
+
 import re
 import sqlite3
 from datetime import datetime
@@ -142,4 +152,4 @@ if __name__ == "__main__":
         format="%(asctime)s %(levelname)s %(message)s"
     )
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="warning")
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="warning", use_colors=False)
