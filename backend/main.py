@@ -1,12 +1,19 @@
-import io
 import sys
+import traceback
 
-# Redirect stdout/stderr when running without a console (PyInstaller --noconsole),
-# since sys.stdout is None in that mode and uvicorn's logger crashes without it.
-if sys.stdout is None:
-    sys.stdout = io.StringIO()
-if sys.stderr is None:
-    sys.stderr = io.StringIO()
+# Redirect stdout/stderr to a log file, since sys.stdout is None
+# when running as a --noconsole PyInstaller build.
+log_file = open("server_debug.log", "a", encoding="utf-8")
+sys.stdout = log_file
+sys.stderr = log_file
+
+
+def log_uncaught_exception(exc_type, exc_value, exc_traceback):
+    traceback.print_exception(exc_type, exc_value, exc_traceback, file=log_file)
+    log_file.flush()
+
+
+sys.excepthook = log_uncaught_exception
 
 import re
 import sqlite3
@@ -147,9 +154,13 @@ if __name__ == "__main__":
     import logging
 
     logging.basicConfig(
-        filename="lostop-server.log",
+        stream=log_file,
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s"
     )
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="warning", use_colors=False)
+    try:
+        uvicorn.run(app, host="0.0.0.0", port=8000, use_colors=False)
+    except Exception:
+        traceback.print_exc(file=log_file)
+        log_file.flush()
