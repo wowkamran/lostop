@@ -1,4 +1,4 @@
 @echo off
 cd /d "%~dp0"
-streamlit run app_dashboard.py
+python -m streamlit run app_dashboard.py
 pause
