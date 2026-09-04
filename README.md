@@ -24,16 +24,6 @@ Employees paste code, credentials, and confidential text into AI chat tools ever
 
 Cloud provider access keys (AWS, GCP), source-control access tokens (GitHub, GitLab), AI provider API keys (OpenAI, Anthropic, Hugging Face), private encryption keys (RSA/EC PEM), database connection strings (PostgreSQL, MySQL, MongoDB), payment processor secret keys (Stripe), team-chat webhooks and bot tokens (Slack, Discord), JWT authentication tokens, and card numbers (Luhn-validated to reduce false positives) — **18 signature types** in total, defined in [`backend/main.py`](backend/main.py) and easy to extend.
 
-## Screenshots
-
-**Blocking a secret in ChatGPT:**
-
-![Lostop blocking a secret, with the API key highlighted in the input field and a toast notification explaining why](docs/screenshots/blocked-message.png)
-
-**Dashboard:**
-
-![Lostop dashboard showing blocked incidents, a timeline chart, and a breakdown by secret type](docs/screenshots/dashboard.png)
-
 ---
 
 ## For users (no coding required)
