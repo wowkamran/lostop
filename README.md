@@ -26,7 +26,13 @@ Cloud provider access keys (AWS, GCP), source-control access tokens (GitHub, Git
 
 ## Screenshots
 
-> _Add a screenshot of a blocked message (toast + highlighted secret) and one of the dashboard here before sharing this repo publicly._
+**Blocking a secret in ChatGPT:**
+
+![Lostop blocking a secret, with the API key highlighted in the input field and a toast notification explaining why](docs/screenshots/blocked-message.png)
+
+**Dashboard:**
+
+![Lostop dashboard showing blocked incidents, a timeline chart, and a breakdown by secret type](docs/screenshots/dashboard.png)
 
 ---
 
