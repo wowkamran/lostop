@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lostop — Privacy Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --ink: #17140F;
+    --ink-soft: #211C15;
+    --paper: #EDE6D6;
+    --paper-dim: #D9D0BC;
+    --stop: #C1272D;
+    --stop-dim: #8E1C21;
+    --hazard: #E8A33D;
+    --ok: #6B8F71;
+    --line: rgba(237,230,214,0.14);
+    --line-strong: rgba(237,230,214,0.28);
+    --display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --body: 'Inter', 'Segoe UI', sans-serif;
+    --mono: 'Space Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--hazard); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover{ color: var(--paper); }
+
+  :focus-visible{ outline: 2px solid var(--hazard); outline-offset: 3px; }
+
+  .wrap{ max-width: 780px; margin: 0 auto; padding: 0 28px; }
+
+  header.nav{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(23,20,15,0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 28px; max-width: 780px; margin:0 auto;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:18px; text-decoration:none; color: var(--paper); }
+  .brand svg{ width:24px; height:24px; }
+  .nav-back{ font-size: 13.5px; color: rgba(237,230,214,0.65); text-decoration: none; }
+  .nav-back:hover{ color: var(--paper); }
+
+  main{ padding: 56px 0 90px; }
+
+  .eyebrow{
+    font-family: var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+    color: var(--hazard); margin-bottom: 14px;
+  }
+  h1{
+    font-family: var(--display); font-size: clamp(30px,4vw,40px); font-weight:700;
+    letter-spacing:-0.01em; margin: 0 0 10px 0; line-height: 1.1;
+  }
+  .updated{
+    font-family: var(--mono); font-size: 13px; color: rgba(237,230,214,0.5);
+    margin: 0 0 40px 0; padding-bottom: 24px; border-bottom: 1px solid var(--line);
+  }
+
+  h2{
+    font-family: var(--display); font-size: 20px; font-weight:600;
+    margin: 42px 0 14px 0; padding-top: 4px;
+  }
+  h2 .num{ font-family: var(--mono); color: var(--stop); font-size: 15px; margin-right: 8px; }
+
+  p{ margin: 0 0 14px 0; color: rgba(237,230,214,0.85); font-size: 15.5px; }
+  ul{ margin: 0 0 14px 0; padding-left: 22px; }
+  li{ margin-bottom: 8px; color: rgba(237,230,214,0.85); font-size: 15.5px; }
+  strong{ color: var(--paper); }
+  code{
+    font-family: var(--mono); font-size: 13.5px; background: var(--ink-soft);
+    padding: 2px 6px; border-radius: 4px; color: var(--hazard);
+  }
+
+  .box{
+    border-left: 3px solid var(--ok);
+    background: var(--ink-soft);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+  }
+  .box .box-label{
+    font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing:.07em;
+    color: var(--ok); display:block; margin-bottom: 6px; font-weight: 700;
+  }
+  .box p{ margin: 0; font-size: 14.5px; }
+
+  table.datatable{ width:100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 14px; }
+  table.datatable th{
+    text-align:left; font-family: var(--mono); font-size: 11.5px; text-transform: uppercase;
+    letter-spacing: .05em; color: rgba(237,230,214,0.5); padding: 8px 10px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  table.datatable td{
+    padding: 10px 10px; border-bottom: 1px solid var(--line); color: rgba(237,230,214,0.85); vertical-align: top;
+  }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 32px 0;
+    font-family: var(--mono); font-size: 12.5px; color: rgba(237,230,214,0.4);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-row">
+    <a href="index.html" class="brand">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2 L28 8 V16.5 C28 23.5 22.8 28.8 16 30 C9.2 28.8 4 23.5 4 16.5 V8 L16 2Z" fill="#EDE6D6"/>
+        <rect x="9.5" y="14.5" width="13" height="4.5" rx="1" fill="#C1272D"/>
+      </svg>
+      Lostop
+    </a>
+    <a href="index.html" class="nav-back">← Back to homepage</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Effective date: September 2026 · Applies to the Lostop browser extension and its local companion server</p>
+
+    <div class="box">
+      <span class="box-label">In one sentence</span>
+      <p>Lostop checks your text on your own computer to look for secrets before you send them to a GenAI chat tool — nothing you type is ever sent to us, stored on our servers, or shared with any third party, because we don't operate any server that receives it.</p>
+    </div>
+
+    <h2><span class="num">01</span>What Lostop does</h2>
+    <p>Lostop is a browser extension that monitors the text you type into supported GenAI chat websites (chatgpt.com, claude.ai, deepl.com). Before your message is sent, the extension forwards that text to a small server application (the "local server") that runs entirely on your own computer — not on a server we operate. The local server checks the text against a set of patterns designed to detect secrets such as API keys, private keys, database credentials, and card numbers, and tells the extension whether to allow or block the message.</p>
+
+    <h2><span class="num">02</span>What data the extension processes, and where it goes</h2>
+    <p>Because Lostop's entire purpose is to inspect text before it's sent, it necessarily has access to the content you type. The table below is a complete, honest account of what that involves.</p>
+
+    <table class="datatable">
+      <tr><th style="width:34%">Data type</th><th>What happens to it</th></tr>
+      <tr><td>Website content / chat messages you type</td><td>Read by the extension, sent only to <code>http://localhost</code> (the local server on your own machine) for pattern matching. Never sent to any server we operate.</td></tr>
+      <tr><td>Authentication information (API keys, passwords, tokens)</td><td>This is what Lostop is designed to detect. If found, it is masked (partially hidden) before being written to a database file that lives only on your computer.</td></tr>
+      <tr><td>Financial information (card numbers)</td><td>Checked locally against a mathematical validation (Luhn algorithm) to reduce false positives. Masked before local storage, never transmitted anywhere else.</td></tr>
+      <tr><td>Extension settings (e.g. protection on/off per site)</td><td>Stored locally in your browser via <code>chrome.storage.local</code>. Not synced to any external service.</td></tr>
+    </table>
+
+    <div class="box">
+      <span class="box-label">Where "local" really means local</span>
+      <p>The local server that scans your text runs as a program on your own computer, listening only on <code>localhost</code>. It is not a service we host, monitor, or have access to. We — the developers of Lostop — never receive, see, or store any text you type, any secret that gets detected, or any incident log. There is no analytics pipeline, no telemetry, and no remote database.</p>
+    </div>
+
+    <h2><span class="num">03</span>Local storage of incidents</h2>
+    <p>When the local server detects a likely secret, it records an entry (timestamp, the type of secret found, and a partially masked snippet — e.g. <code>AKIAIO**************</code>) in a local database file (<code>incidents.db</code>) stored on your own computer, next to the server program. This log exists so you can review what was blocked, for example through the optional local dashboard. This file is never transmitted anywhere; you can delete it at any time by deleting the file itself.</p>
+
+    <h2><span class="num">04</span>Third parties</h2>
+    <p>Lostop does not sell, rent, or transfer any data to third parties. The extension does not include any third-party analytics, advertising, or tracking code. The only network request the extension makes is to the local server described above, which runs on <code>localhost</code> — your own computer.</p>
+
+    <h2><span class="num">05</span>Permissions the extension requests, and why</h2>
+    <ul>
+      <li><strong>Access to chatgpt.com, claude.ai, and deepl.com</strong> — required to read the text in the chat input field so it can be checked before sending.</li>
+      <li><strong>Access to localhost</strong> — required to send that text to the local server on your own machine for checking.</li>
+      <li><strong>Storage</strong> — required to remember basic extension settings (such as whether protection is enabled) locally in your browser.</li>
+    </ul>
+
+    <h2><span class="num">06</span>Children's privacy</h2>
+    <p>Lostop is a productivity and security tool intended for general audiences, including developers and business users. It is not directed at children, and we do not knowingly collect data from children, in line with the fact that we do not collect data from any user at all.</p>
+
+    <h2><span class="num">07</span>Changes to this policy</h2>
+    <p>If this policy changes, the updated version will be published at this same URL with a revised effective date at the top of the page.</p>
+
+    <h2><span class="num">08</span>Contact</h2>
+    <p>Questions about this policy or the project can be raised via <a href="https://github.com/wowkamran/lostop/issues" target="_blank" rel="noopener">GitHub Issues</a>, or by reviewing the source code directly at <a href="https://github.com/wowkamran/lostop" target="_blank" rel="noopener">github.com/wowkamran/lostop</a>.</p>
+  </div>
+</main>
+
+<footer>
+  Lostop — Local-first DLP for GenAI chat · Not affiliated with OpenAI, Anthropic, or DeepL
+</footer>
+
+</body>
+</html>
