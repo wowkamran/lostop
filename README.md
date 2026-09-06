@@ -24,66 +24,87 @@ Employees paste code, credentials, and confidential text into AI chat tools ever
 
 Cloud provider access keys (AWS, GCP), source-control access tokens (GitHub, GitLab), AI provider API keys (OpenAI, Anthropic, Hugging Face), private encryption keys (RSA/EC PEM), database connection strings (PostgreSQL, MySQL, MongoDB), payment processor secret keys (Stripe), team-chat webhooks and bot tokens (Slack, Discord), JWT authentication tokens, and card numbers (Luhn-validated to reduce false positives) — **18 signature types** in total, defined in [`backend/main.py`](backend/main.py) and easy to extend.
 
----
+## Screenshots
 
-## For users (no coding required)
+**Blocking a secret in ChatGPT:**
 
-If you just want to use Lostop — not build it — this is the whole process:
+![Lostop blocking a secret, with the API key highlighted in the input field and a toast notification explaining why](docs/screenshots/blocked-message.png)
 
-1. **Go to the [landing page](https://wowkamran.github.io/lostop/)** and click **Download**. You'll get two things: the browser extension and the `lostop-server.exe` file.
-2. **Run `lostop-server.exe` once.** No console window opens — it just starts working quietly in the background. This is the piece that actually checks your text; it needs to be running whenever you want protection active. *(Setting it to launch automatically at startup, via Windows Task Scheduler, means you only ever have to do this once — see [Packaging](#packaging-the-server-optional).)*
-3. **Load the extension into Chrome:**
-   - Open `chrome://extensions`
-   - Turn on **Developer mode** (top right)
-   - Click **Load unpacked**
-   - Select the `extension` folder you downloaded
-4. **Done.** Open ChatGPT, Claude, or DeepL and use it as normal — Lostop is already watching the input field. Nothing else to configure.
+**Dashboard:**
 
-> **Why isn't this a one-click "Add to Chrome" install?** Chrome only allows one-click installs for extensions published on the Chrome Web Store. Lostop's listing is currently pending review — once approved, step 3 above will no longer be necessary.
+![Lostop dashboard showing blocked incidents, a timeline chart, and a breakdown by secret type](docs/screenshots/dashboard.png)
 
 ---
 
-## Quick start (for developers)
+## Quick start for Windows (recommended)
 
-### 1. Get the code
+The fastest way to get Lostop running — no Python, no terminal.
+
+1. **Download the server:** grab `lostop-server.exe` from the [latest release](https://github.com/wowkamran/lostop/releases/latest) (or the direct link below):
+   ```
+   https://github.com/wowkamran/lostop/releases/download/v1.0.0/lostop-server.exe
+   ```
+2. **Run it once.** Double-click the file. No console window opens — it starts working quietly in the background. It needs to be running whenever you want protection active.
+   > To skip this step in the future, register it with **Windows Task Scheduler** using an `At log on` trigger — then it starts automatically every time you sign in.
+3. **Download and load the extension** — see [Loading the extension into Chrome](#loading-the-extension-into-chrome) below.
+4. **Done.** Open ChatGPT, Claude, or DeepL and use it as normal.
+
+---
+
+## Alternative: run from source (for developers)
+
+If you'd rather run the Python server directly — for development, debugging, or on macOS/Linux where the prebuilt `.exe` doesn't apply:
 
 ```bash
 git clone https://github.com/wowkamran/lostop.git
-cd lostop
+cd lostop/backend
+pip install fastapi uvicorn
+python -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-### 2. Run the local server
+Keep this terminal window open — it's what the extension talks to for every check. `--reload` can be added during development to pick up code changes automatically:
 
 ```bash
-cd backend
-pip install fastapi uvicorn
-uvicorn main:app --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Keep this running in the background — it's what the extension talks to for every check.
+---
 
-> **Prefer not to use a terminal?** A pre-built Windows server (`lostop-server.exe`, no console window, no Python required) can be produced from this same code with PyInstaller — see [Packaging](#packaging-the-server-optional) below.
+## Loading the extension into Chrome
 
-### 3. Load the extension into Chrome
+1. Download the extension — either as part of the [full source ZIP](https://github.com/wowkamran/lostop/archive/refs/heads/main.zip), or via `git clone` above.
+2. Open `chrome://extensions` (works the same way in any Chromium-based browser — Edge, Brave, Vivaldi).
+3. Enable **Developer mode** (toggle, top right).
+4. Click **Load unpacked**.
+5. Select the `extension/` folder from what you downloaded.
+6. The Lostop icon should appear in your extensions list — that's it.
 
-1. Open `chrome://extensions`
-2. Enable **Developer mode** (top right)
-3. Click **Load unpacked**
-4. Select the `extension/` folder from this repo
+> **Why isn't this a one-click "Add to Chrome" install?** Chrome only allows one-click installs for extensions listed on the Chrome Web Store. Lostop's listing is currently pending review — once approved, steps 2–5 above will no longer be necessary.
 
-### 4. Try it
+### Try it
 
 Open [chatgpt.com](https://chatgpt.com), type something like `AKIAIOSFODNN7EXAMPLE`, and hit Enter. Lostop should block the message, highlight the key, and show a notification explaining why.
 
-### 5. (Optional) View the dashboard
+---
+
+## Dashboard (optional)
+
+See what's been blocked — filterable by day, week, month, or all time.
+
+**Windows — one-click launcher:**
+
+1. Download `start-dashboard.bat` (included in the `dashboard/` folder of the repo).
+2. Double-click it. It installs dependencies on first run if needed and opens the dashboard in your browser at `http://localhost:8501`.
+
+**From source (any OS):**
 
 ```bash
 cd dashboard
 pip install streamlit requests pandas plotly
-streamlit run app_dashboard.py
+python -m streamlit run app_dashboard.py
 ```
 
-Opens at `http://localhost:8501` — shows blocked incidents filterable by day/week/month, with a breakdown by secret type.
+The dashboard reads from the same local `incidents.db` the server writes to — nothing is sent anywhere else. Make sure the server (`lostop-server.exe`, or `uvicorn`, from the steps above) is running at the same time, or the dashboard will show "Could not reach the Lostop server."
 
 ---
 
@@ -137,9 +158,9 @@ lostop/
     └── privacy.html             # Privacy policy (required for Chrome Web Store)
 ```
 
-## Packaging the server (optional)
+## Building the server executable yourself
 
-To distribute a Python-free server for Windows users:
+If you want to build `lostop-server.exe` from source instead of using the one in [Releases](https://github.com/wowkamran/lostop/releases):
 
 ```bash
 cd backend
@@ -147,7 +168,7 @@ pip install pyinstaller
 pyinstaller --onefile --noconsole --name lostop-server main.py
 ```
 
-Produces `dist/lostop-server.exe` — a double-click launcher with no visible console window. Pair it with a Windows Task Scheduler entry (`At log on` trigger) for a fully automatic startup, so the user never has to run anything manually after the first install.
+Produces `dist/lostop-server.exe` — a double-click launcher with no visible console window. Must be built on Windows (PyInstaller doesn't cross-compile).
 
 ## Privacy
 
@@ -164,6 +185,7 @@ Lostop's local server runs entirely on the user's own machine. No text, secret, 
 - [x] Streamlit dashboard with date filtering
 - [x] Styled toast notifications + in-field secret highlighting
 - [x] Windows `.exe` packaging + Task Scheduler autostart
+- [x] Prebuilt binary published via GitHub Releases
 - [ ] Support for claude.ai and deepl.com (currently ChatGPT only)
 - [ ] Chrome Web Store listing (submitted, pending review)
 - [ ] Firefox support (requires manifest adaptation)
