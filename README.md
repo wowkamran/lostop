@@ -26,9 +26,11 @@ Cloud provider access keys (AWS, GCP), source-control access tokens (GitHub, Git
 
 ## Landing page
 
-Full product page with a live demo, the complete signature catalog, and step-by-step install instructions:
+Full product page with a live demo, the complete signature catalog, and step-by-step install instructions — you can download both the extension and the server directly from there:
 
 **[wowkamran.github.io/lostop →](https://wowkamran.github.io/lostop/)**
+
+> **Chrome Web Store listing:** submitted and currently **pending review**. Once approved, installing the extension will be a single "Add to Chrome" click — no manual download or `chrome://extensions` setup needed. Until then, the landing page and the steps below are the way to install it.
 
 ---
 
