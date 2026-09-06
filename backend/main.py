@@ -1,15 +1,26 @@
+import os
 import sys
 import traceback
 
-# Redirect stdout/stderr to a log file, since sys.stdout is None
-# when running as a --noconsole PyInstaller build.
-log_file = open("server_debug.log", "a", encoding="utf-8")
+# Определяем абсолютную папку запуска (работает и для .exe, и для .py)
+if getattr(sys, "frozen", False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+LOG_PATH = os.path.join(BASE_DIR, "server_debug.log")
+DB_PATH = os.path.join(BASE_DIR, "incidents.db")
+
+# Перенаправление stdout/stderr в лог-файл в папке приложения
+log_file = open(LOG_PATH, "a", encoding="utf-8")
 sys.stdout = log_file
 sys.stderr = log_file
 
 
 def log_uncaught_exception(exc_type, exc_value, exc_traceback):
-    traceback.print_exception(exc_type, exc_value, exc_traceback, file=log_file)
+    traceback.print_exception(
+        exc_type, exc_value, exc_traceback, file=log_file
+    )
     log_file.flush()
 
 
@@ -31,19 +42,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DB_PATH = "incidents.db"
-
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
+    conn.execute(
+        """
         CREATE TABLE IF NOT EXISTS incidents (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
             reason TEXT NOT NULL,
             snippet_masked TEXT NOT NULL
         )
-    """)
+    """
+    )
     conn.commit()
     conn.close()
 
@@ -58,7 +69,7 @@ def save_incident(reason, text):
     conn = sqlite3.connect(DB_PATH)
     conn.execute(
         "INSERT INTO incidents (timestamp, reason, snippet_masked) VALUES (?, ?, ?)",
-        (datetime.now().isoformat(), reason, mask_text(text))
+        (datetime.now().isoformat(), reason, mask_text(text)),
     )
     conn.commit()
     conn.close()
@@ -92,17 +103,38 @@ PATTERNS = [
     (r"AKIA[0-9A-Z]{16}", "AWS Access Key detected"),
     (r"ghp_[A-Za-z0-9]{36}", "GitHub Personal Access Token detected"),
     (r"glpat-[A-Za-z0-9_-]{20}", "GitLab Personal Access Token detected"),
-    (r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", "JWT token detected"),
+    (
+        r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+",
+        "JWT token detected",
+    ),
     (r"-----BEGIN (RSA |EC |)PRIVATE KEY-----", "Private key (PEM) detected"),
-    (r"postgres(?:ql)?:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (PostgreSQL) detected"),
-    (r"mysql:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (MySQL) detected"),
-    (r"mongodb(?:\+srv)?:\/\/[^\s]+:[^\s]+@[^\s]+", "Database connection URI (MongoDB) detected"),
+    (
+        r"postgres(?:ql)?:\/\/[^\s]+:[^\s]+@[^\s]+",
+        "Database connection URI (PostgreSQL) detected",
+    ),
+    (
+        r"mysql:\/\/[^\s]+:[^\s]+@[^\s]+",
+        "Database connection URI (MySQL) detected",
+    ),
+    (
+        r"mongodb(?:\+srv)?:\/\/[^\s]+:[^\s]+@[^\s]+",
+        "Database connection URI (MongoDB) detected",
+    ),
     (r"sk_live_[A-Za-z0-9]{24,}", "Stripe live secret key detected"),
     (r"sk_test_[A-Za-z0-9]{24,}", "Stripe test secret key detected"),
     (r'"type":\s*"service_account"', "GCP Service Account key detected"),
-    (r"hooks\.slack\.com\/services\/[A-Za-z0-9/]+", "Slack Incoming Webhook detected"),
-    (r"discord(?:app)?\.com\/api\/webhooks\/[0-9]+\/[A-Za-z0-9_-]+", "Discord Webhook detected"),
-    (r"[MN][A-Za-z0-9_-]{23,25}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,38}", "Discord Bot Token detected"),
+    (
+        r"hooks\.slack\.com\/services\/[A-Za-z0-9/]+",
+        "Slack Incoming Webhook detected",
+    ),
+    (
+        r"discord(?:app)?\.com\/api\/webhooks\/[0-9]+\/[A-Za-z0-9_-]+",
+        "Discord Webhook detected",
+    ),
+    (
+        r"[MN][A-Za-z0-9_-]{23,25}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,38}",
+        "Discord Bot Token detected",
+    ),
     (r"hf_[A-Za-z0-9]{34,40}", "Hugging Face Access Token detected"),
 ]
 
@@ -120,10 +152,12 @@ def scan_text(request: ScanRequest):
 
     for match in re.finditer(CARD_CANDIDATE_PATTERN, text):
         if is_valid_luhn(match.group()):
-            findings.append({
-                "reason": "Card number detected (Luhn-validated)",
-                "matched_text": match.group()
-            })
+            findings.append(
+                {
+                    "reason": "Card number detected (Luhn-validated)",
+                    "matched_text": match.group(),
+                }
+            )
 
     if findings:
         for f in findings:
@@ -132,7 +166,7 @@ def scan_text(request: ScanRequest):
             "is_blocked": True,
             "reason": findings[0]["reason"],
             "matched_text": findings[0]["matched_text"],
-            "all_findings": findings
+            "all_findings": findings,
         }
 
     return {"is_blocked": False}
@@ -150,13 +184,14 @@ def get_incidents():
 
 
 if __name__ == "__main__":
-    import uvicorn
     import logging
+
+    import uvicorn
 
     logging.basicConfig(
         stream=log_file,
         level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(message)s"
+        format="%(asctime)s %(levelname)s %(message)s",
     )
 
     try:
