@@ -196,8 +196,10 @@
   .server-cta{
     display:flex; align-items:center; justify-content:space-between; flex-wrap: wrap; gap: 16px;
     background: var(--ink-soft); border: 1px solid rgba(232,163,61,0.35); border-radius: 10px;
-    padding: 20px 26px; margin-bottom: 28px;
+    padding: 20px 24px;
   }
+  .quick-dl-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  @media (max-width: 720px){ .quick-dl-grid{ grid-template-columns: 1fr; } }
   .server-cta-label{ display:block; font-family: var(--mono); font-size: 11.5px; text-transform:uppercase; letter-spacing:.06em; color: rgba(237,230,214,0.5); margin-bottom: 4px; }
   .server-cta-name{ display:block; font-family: var(--display); font-size: 18px; font-weight:700; color: var(--paper); }
   .server-cta-desc{ display:block; font-size: 13px; color: rgba(237,230,214,0.55); margin-top: 2px; }
@@ -497,13 +499,24 @@
       <p class="section-sub">Pick prebuilt binaries if you just want it running, or build from source if you're a developer.</p>
     </div>
 
-    <div class="server-cta">
-      <div>
-        <span class="server-cta-label">Just need the server?</span>
-        <span class="server-cta-name">lostop-server.exe</span>
-        <span class="server-cta-desc">Standalone Windows binary, no Python required</span>
+    <div class="quick-dl-grid">
+      <div class="server-cta">
+        <div>
+          <span class="server-cta-label">Local server</span>
+          <span class="server-cta-name">lostop-server.exe</span>
+          <span class="server-cta-desc">Standalone Windows binary, no Python required</span>
+        </div>
+        <a class="btn btn-server" href="https://github.com/wowkamran/lostop/releases/download/v1.0.0/lostop-server.exe">Download Server (.exe)</a>
       </div>
-      <a class="btn btn-server" href="https://github.com/wowkamran/lostop/releases/download/v1.0.0/lostop-server.exe">Download Server (.exe)</a>
+
+      <div class="server-cta">
+        <div>
+          <span class="server-cta-label">Browser extension</span>
+          <span class="server-cta-name">extension/</span>
+          <span class="server-cta-desc">Load unpacked into Chrome — details below</span>
+        </div>
+        <a class="btn btn-server" href="https://github.com/wowkamran/lostop/archive/refs/heads/main.zip">Download Extension</a>
+      </div>
     </div>
 
     <div class="path-grid">
