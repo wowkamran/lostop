@@ -205,6 +205,10 @@
   .server-cta-desc{ display:block; font-size: 13px; color: rgba(237,230,214,0.55); margin-top: 2px; }
   .btn-server{ background: var(--hazard); color: var(--ink); flex: none; }
   .btn-server:hover{ background: #f0b354; }
+  .btn-store{ background: var(--ok); color: var(--ink); flex: none; }
+  .btn-store:hover{ background: #7ea384; }
+  .server-cta.store{ border-color: rgba(107,143,113,0.35); }
+  .install-note.store-note{ border-left-color: var(--ok); background: rgba(107,143,113,0.08); }
 
   .path-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
   @media (max-width: 860px){ .path-grid{ grid-template-columns: 1fr; } }
@@ -263,6 +267,13 @@
   .dash-copy ul{ margin: 16px 0 0 0; padding-left: 20px; }
   .dash-copy li{ font-size: 14.5px; color: rgba(237,230,214,0.7); margin-bottom: 9px; }
 
+  /* ============ FAQ ============ */
+  .faq-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 780px){ .faq-grid{ grid-template-columns: 1fr; } }
+  .faq-item{ background: var(--ink-soft); border: 1px solid var(--line); border-radius: 10px; padding: 24px 24px; }
+  .faq-item h4{ font-family: var(--display); font-size: 16px; margin: 0 0 10px 0; color: var(--paper); }
+  .faq-item p{ font-size: 14px; color: rgba(237,230,214,0.68); margin: 0; line-height: 1.6; }
+
   /* ============ FOOTER ============ */
   footer{ border-top: 1px solid var(--line); padding: 36px 0 46px; }
   .footer-row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
@@ -289,6 +300,7 @@
       <a href="#how" class="hide-mobile">How it works</a>
       <a href="#catches" class="hide-mobile">What it catches</a>
       <a href="#dashboard" class="hide-mobile">Dashboard</a>
+      <a href="#faq" class="hide-mobile">FAQ</a>
       <a href="#install">Install</a>
       <a class="nav-cta" href="#install">Download</a>
     </nav>
@@ -495,11 +507,20 @@
   <div class="wrap">
     <div class="section-head">
       <div class="section-eyebrow">Install</div>
-      <h2 class="section-title">Two ways to get set up</h2>
-      <p class="section-sub">Pick prebuilt binaries if you just want it running, or build from source if you're a developer.</p>
+      <h2 class="section-title">Two things to set up</h2>
+      <p class="section-sub">The extension is one click via the Chrome Web Store. The local server takes one more step.</p>
     </div>
 
     <div class="quick-dl-grid">
+      <div class="server-cta store">
+        <div>
+          <span class="server-cta-label">Browser extension</span>
+          <span class="server-cta-name">Lostop</span>
+          <span class="server-cta-desc">Live on the Chrome Web Store</span>
+        </div>
+        <a class="btn btn-store" href="https://chromewebstore.google.com/detail/kefdbjnfahfoakbcfjiahmhobceoiikf">Add to Chrome</a>
+      </div>
+
       <div class="server-cta">
         <div>
           <span class="server-cta-label">Local server</span>
@@ -508,75 +529,83 @@
         </div>
         <a class="btn btn-server" href="https://github.com/wowkamran/lostop/releases/download/v1.0.0/lostop-server.exe">Download Server (.exe)</a>
       </div>
+    </div>
 
-      <div class="server-cta">
-        <div>
-          <span class="server-cta-label">Browser extension</span>
-          <span class="server-cta-name">extension/</span>
-          <span class="server-cta-desc">Load unpacked into Chrome — details below</span>
-        </div>
-        <a class="btn btn-server" href="https://github.com/wowkamran/lostop/archive/refs/heads/main.zip">Download Extension</a>
-      </div>
+    <div class="install-note store-note">
+      <strong>Lostop is approved and live on the Chrome Web Store.</strong> The listing can take a few days to appear in on-site search — if search comes up empty, the <a href="https://chromewebstore.google.com/detail/kefdbjnfahfoakbcfjiahmhobceoiikf" style="color:var(--hazard);">direct link above</a> always works.
     </div>
 
     <div class="path-grid">
       <div class="path-card">
         <span class="path-badge recommended">Recommended</span>
-        <h3>Automatic setup</h3>
-        <p class="path-sub">Prebuilt binaries — no Python, no terminal.</p>
+        <h3>Automatic server setup</h3>
+        <p class="path-sub">Prebuilt binary — no Python, no terminal.</p>
         <ol class="path-steps">
           <li>
-            Download the extension
-            <a class="path-link" href="https://github.com/wowkamran/lostop/archive/refs/heads/main.zip">lostop-main.zip →</a>
+            Add the extension to Chrome
+            <a class="path-link" href="https://chromewebstore.google.com/detail/kefdbjnfahfoakbcfjiahmhobceoiikf">Chrome Web Store →</a>
           </li>
           <li>
             Download and run the server
             <a class="path-link" href="https://github.com/wowkamran/lostop/releases/download/v1.0.0/lostop-server.exe">lostop-server.exe →</a>
             <span class="path-note">No console window — it just starts working in the background.</span>
           </li>
-          <li>Load the <code>extension</code> folder into Chrome — see <a href="#load-extension" style="color:var(--hazard);">details below</a></li>
           <li>Done — open ChatGPT, Claude, or DeepL</li>
         </ol>
       </div>
 
       <div class="path-card">
         <span class="path-badge">For developers</span>
-        <h3>Manual setup</h3>
+        <h3>Manual server setup</h3>
         <p class="path-sub">Run the Python source directly.</p>
         <ol class="path-steps">
           <li>
-            Clone the repo
-            <div class="path-code">git clone https://github.com/wowkamran/lostop.git</div>
+            Add the extension to Chrome
+            <a class="path-link" href="https://chromewebstore.google.com/detail/kefdbjnfahfoakbcfjiahmhobceoiikf">Chrome Web Store →</a>
           </li>
           <li>
             Run the server from source
-            <div class="path-code">cd backend<br>pip install fastapi uvicorn<br>uvicorn main:app --host 0.0.0.0 --port 8000</div>
+            <div class="path-code">git clone https://github.com/wowkamran/lostop.git<br>cd lostop/backend<br>pip install fastapi uvicorn<br>python -m uvicorn main:app --host 0.0.0.0 --port 8000</div>
           </li>
-          <li>Load the <code>extension</code> folder into Chrome — see <a href="#load-extension" style="color:var(--hazard);">details below</a></li>
           <li>Done — open ChatGPT, Claude, or DeepL</li>
         </ol>
       </div>
     </div>
 
-    <div class="install-note">
-      <strong>Why isn't this a one-click "Add to Chrome" install?</strong> Chrome only allows one-click installs for extensions listed on the Chrome Web Store. Lostop's listing is currently pending review — once approved, the extension step below will no longer be necessary.
-    </div>
-
     <div class="install-detail" id="load-extension">
-      <h3>Loading the extension into Chrome</h3>
-      <ol>
-        <li>Open <code>chrome://extensions</code> in Chrome (or any Chromium-based browser — Edge, Brave, Vivaldi all work the same way).</li>
-        <li>Turn on <strong>Developer mode</strong> using the toggle in the top-right corner.</li>
-        <li>Click <strong>Load unpacked</strong>.</li>
-        <li>Select the <code>extension</code> folder from the files you downloaded.</li>
-        <li>You should see the Lostop icon appear in your extensions list — that's it.</li>
-      </ol>
-
       <h3>Keeping the server running automatically</h3>
       <ol>
         <li>The server needs to be running whenever you want protection active.</li>
         <li>To avoid starting it by hand every time, add it to Windows Task Scheduler with an <code>At log on</code> trigger — then it's a true "set it once and forget it" setup.</li>
       </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>Why do I need Lostop at all?</h4>
+        <p>Once you paste something into a GenAI chat and hit send, it's gone — no service will delete it from its logs on request. Lostop catches API keys, credentials, and other secrets before that happens, so a mistake doesn't turn into a real leak.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Why does it need a separate server?</h4>
+        <p>Browsers don't let a web page (or even an extension) run detection logic that touches your files or a database directly — for good security reasons. The local server is a small companion program that does the actual checking, entirely on your own machine, and talks to the extension over <code style="font-family:var(--mono); color:var(--hazard);">localhost</code> only.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What exactly does it block?</h4>
+        <p>18 signature types: cloud and source-control credentials, AI provider API keys, private encryption keys, database connection strings, payment keys, team-tool webhooks and tokens, JWTs, and checksum-validated card numbers. See the full <a href="#catches" style="color:var(--hazard);">catalog above</a> or the source in <a href="https://github.com/wowkamran/lostop/blob/main/backend/main.py" style="color:var(--hazard);">backend/main.py</a>.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How can I be sure my data doesn't go anywhere?</h4>
+        <p>The server only listens on <code style="font-family:var(--mono); color:var(--hazard);">localhost</code> — it isn't reachable from the internet, and the project doesn't operate any cloud backend to send data to even if it wanted to. The code is open source, so you (or anyone) can read exactly what it does — see <a href="https://github.com/wowkamran/lostop" style="color:var(--hazard);">the repository</a> and the full <a href="privacy.html" style="color:var(--hazard);">Privacy Policy</a>.</p>
+      </div>
     </div>
   </div>
 </section>

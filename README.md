@@ -26,32 +26,32 @@ Cloud provider access keys (AWS, GCP), source-control access tokens (GitHub, Git
 
 ## Landing page
 
-Full product page with a live demo, the complete signature catalog, and step-by-step install instructions — you can download both the extension and the server directly from there:
+Full product page with a live demo, the complete signature catalog, and an FAQ:
 
 **[wowkamran.github.io/lostop →](https://wowkamran.github.io/lostop/)**
 
-> **Chrome Web Store listing:** submitted and currently **pending review**. Once approved, installing the extension will be a single "Add to Chrome" click — no manual download or `chrome://extensions` setup needed. Until then, the landing page and the steps below are the way to install it.
-
 ---
 
-## Quick start for Windows (recommended)
+## Install
 
-The fastest way to get Lostop running — no Python, no terminal.
+**1. Add the extension to Chrome** — one click, live on the Chrome Web Store:
 
-1. **Download the server:** grab `lostop-server.exe` from the [latest release](https://github.com/wowkamran/lostop/releases/latest) (or the direct link below):
+**[Add to Chrome →](https://chromewebstore.google.com/detail/kefdbjnfahfoakbcfjiahmhobceoiikf)**
+
+> The listing can take a few days to appear in the Web Store's on-site search after approval — the direct link above always works in the meantime.
+
+**2. Get the local server running** — pick one:
+
+### Option A — Windows binary (recommended, no Python needed)
+
+1. Download `lostop-server.exe` from the [latest release](https://github.com/wowkamran/lostop/releases/latest) (or the direct link below):
    ```
    https://github.com/wowkamran/lostop/releases/download/v1.0.0/lostop-server.exe
    ```
-2. **Run it once.** Double-click the file. No console window opens — it starts working quietly in the background. It needs to be running whenever you want protection active.
+2. Run it once. No console window opens — it starts working quietly in the background. It needs to be running whenever you want protection active.
    > To skip this step in the future, register it with **Windows Task Scheduler** using an `At log on` trigger — then it starts automatically every time you sign in.
-3. **Download and load the extension** — see [Loading the extension into Chrome](#loading-the-extension-into-chrome) below.
-4. **Done.** Open ChatGPT, Claude, or DeepL and use it as normal.
 
----
-
-## Alternative: run from source (for developers)
-
-If you'd rather run the Python server directly — for development, debugging, or on macOS/Linux where the prebuilt `.exe` doesn't apply:
+### Option B — run from source (for developers, or non-Windows)
 
 ```bash
 git clone https://github.com/wowkamran/lostop.git
@@ -60,28 +60,13 @@ pip install fastapi uvicorn
 python -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-Keep this terminal window open — it's what the extension talks to for every check. `--reload` can be added during development to pick up code changes automatically:
+Keep this terminal window open — it's what the extension talks to for every check. Add `--reload` during development to pick up code changes automatically.
 
-```bash
-python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
----
-
-## Loading the extension into Chrome
-
-1. Download the extension — either as part of the [full source ZIP](https://github.com/wowkamran/lostop/archive/refs/heads/main.zip), or via `git clone` above.
-2. Open `chrome://extensions` (works the same way in any Chromium-based browser — Edge, Brave, Vivaldi).
-3. Enable **Developer mode** (toggle, top right).
-4. Click **Load unpacked**.
-5. Select the `extension/` folder from what you downloaded.
-6. The Lostop icon should appear in your extensions list — that's it.
-
-> **Why isn't this a one-click "Add to Chrome" install?** Chrome only allows one-click installs for extensions listed on the Chrome Web Store. Lostop's listing is currently pending review — once approved, steps 2–5 above will no longer be necessary.
+**3. Done.** Open ChatGPT, Claude, or DeepL and use it as normal.
 
 ### Try it
 
-Open [chatgpt.com](https://chatgpt.com), type something like `AKIAIOSFODNN7EXAMPLE`, and hit Enter. Lostop should block the message, highlight the key, and show a notification explaining why.
+Type something like `AKIAIOSFODNN7EXAMPLE`, and hit Enter. Lostop should block the message, highlight the key, and show a notification explaining why.
 
 ---
 
@@ -174,6 +159,20 @@ Lostop's local server runs entirely on the user's own machine. No text, secret, 
 
 ---
 
+## FAQ
+
+**Why do I need Lostop at all?**
+Once you paste something into a GenAI chat and hit send, it's gone — no service will delete it from its logs on request. Lostop catches API keys, credentials, and other secrets before that happens.
+
+**Why does it need a separate server?**
+Browsers don't let an extension run detection logic that touches a local database directly — for good security reasons. The local server is a small companion program that does the actual checking, entirely on your own machine, talking to the extension over `localhost` only.
+
+**What exactly does it block?**
+18 signature types: cloud and source-control credentials, AI provider API keys, private encryption keys, database connection strings, payment keys, team-tool webhooks/tokens, JWTs, and checksum-validated card numbers — see [What it catches](#what-it-catches) above or the source in [`backend/main.py`](backend/main.py).
+
+**How can I be sure my data doesn't go anywhere?**
+The server only listens on `localhost` — unreachable from the internet — and the project doesn't operate any cloud backend to send data to. The code is open source, so you can verify this yourself. See the [Privacy Policy](docs/privacy.html).
+
 ## Roadmap
 
 - [x] Real blocking (both Enter and the Send button), race-condition-free
@@ -184,8 +183,8 @@ Lostop's local server runs entirely on the user's own machine. No text, secret, 
 - [x] Styled toast notifications + in-field secret highlighting
 - [x] Windows `.exe` packaging + Task Scheduler autostart
 - [x] Prebuilt binary published via GitHub Releases
+- [x] Chrome Web Store listing (approved and live)
 - [ ] Support for claude.ai and deepl.com (currently ChatGPT only)
-- [ ] Chrome Web Store listing (submitted, pending review)
 - [ ] Firefox support (requires manifest adaptation)
 - [ ] Contextual detection for legal/medical/financial text without a structural signature
 - [ ] Centralized/team reporting (trade-off: conflicts with the local-first privacy model — needs design discussion)
